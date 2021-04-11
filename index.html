@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Todoアプリ</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main id="app">
+
+    <div class="app-title">
+      <h1>My Todo List</h1>
+    </div>
+
+  
+      <div class="add-todo-form">
+        <div class="form-title">
+          <h2>Todoを追加する</h2>
+        </div>
+      
+      <input v-model="todo.title" placeholder="Todoのタイトルを記入"/>
+      <button type="button" :disabled="isShowUpdateForm" @click="addTodo">追加</button>
+     </div>
+         <!-- list : todoの一覧を内包するラッパー -->
+      <div class="list">
+        
+        <div 
+        v-for="(todo, index) in todos" 
+        :key="todo.id"
+        class="container">
+        <div class="todo-id">
+          ID：{{ todo.id }}
+        </div>
+        <div class="todo-title">
+          Title： {{ todo.title }}
+        </div>
+        <button 
+        type="button"
+        :disabled="isShowedUpdateForm"
+        @click="deleteTodo(todo.id)" 
+        >削除</button>
+        <button 
+        type="button"
+        :disabled="isShowedUpdateForm"
+        @click="showUpdateForm(todo)">編集</button>
+       </div>
+      </div>
+
+      <!-- 編集フォーム -->
+      <div v-show="isShowedUpdateForm" class="update-todo-form">
+        ID : {{ updateTodoInput.id }}
+        <input v-model="updateTodoInput.title"
+          placeholder="Todoのタイトルを記入" />
+        <button type="button" @click="updateTodo">保存</button>
+        <button type="button" @click="isShowedUpdateForm = !isShowedUpdateForm">戻る</button>    
+      </div>
+  </main>
+  <!-- 開発用 Vue CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+  <script>
+    const app = new Vue({
+      el: '#app',
+      data: {
+        todos:[],
+        todo: {
+          id: 0,
+          title: ''
+        },
+        updateTodoInput: {
+          id: null,
+          title: ''
+        },
+        isShowedUpdateForm: false
+      },
+
+      methods: {
+        addTodo() { 
+          this.todos.push({
+            id: this.todo.id,
+            title: this.todo.title
+          })
+          this.todo.id++
+          this.todo.title = ''
+        },
+        // 削除
+        deleteTodo(targetTodoIndex) {
+        
+        this.todos.splice(targetTodoIndex, 1)
+        },
+        showUpdateForm(targetTodo) {
+          this.isShowedUpdateForm = !this.isShowedUpdateForm
+          this.updateTodoInput.title = targetTodo.title
+          this.updateTodoInput.id = targetTodo.id
+        },
+        updateTodo() {
+            this.todos = this.todos.map(todo => {
+              if (todo.id === this.updateTodoInput.id) {
+                todo.title = this.updateTodoInput.title
+              }
+              return todo
+            })
+            this.isShowedUpdateForm = !this.isShowedUpdateForm
+          }
+        },
+    })
+  </script>
+
+</body>
+</html>
